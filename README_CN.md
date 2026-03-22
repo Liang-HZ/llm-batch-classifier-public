@@ -234,6 +234,44 @@ llm-classify retry output/run_xxx/classification_result.csv
 - 断点续跑：每条结果单独落盘，不等整批结束
 - 自动重试：区分瞬时错误和语义错误
 
+## `window` 和 `cycle` 到底有什么区别
+
+这两个配置不是重复的，它们管的是两层不同的事情：
+
+- `rate_limit` 管短时间内的发送节奏
+- `cycle` 管更长时间段里的总预算
+
+你可以这样理解 `rate_limit`：
+
+> “我现在这一小段时间里，最多能打多快？”
+
+- `rate_limit.rps`：滑动窗口内最多允许多少次请求
+- `rate_limit.tps`：滑动窗口内最多允许多少估算 token
+- `rate_limit.window`：这个“滑动窗口”往前看多少秒
+- `rate_limit.tokens_per_call`：当启用 `tps` 时，单次请求大约按多少 token 估算
+
+你可以这样理解 `cycle`：
+
+> “拉长到一分钟、一小时这种尺度，我总共最多能打多少次？”
+
+- `cycle.duration`：一个周期有多长，单位秒
+- `cycle.max_calls`：这个周期里最多允许多少次 API 调用
+
+一句话区分：
+
+- `rate_limit` 负责把流量打平，避免短时间冲得太猛
+- `cycle` 负责卡住长一点时间范围内的总调用量
+
+例子：
+
+- `rate_limit.rps: 3` 且 `rate_limit.window: 1`，表示任意 1 秒窗口内最多 3 个请求
+- `cycle.duration: 60` 且 `cycle.max_calls: 180`，表示每 60 秒周期内最多 180 次调用
+
+对大多数用户来说：
+
+- 先只配 `rate_limit`
+- 只有当你的提供商限额或你自己的预算表达方式是“每分钟/每小时最多 N 次”时，再加 `cycle`
+
 ## 常用命令
 
 ```text
@@ -318,7 +356,8 @@ model:
   # 单次 API 调用内部对瞬时错误的重试次数。
   max_retries: 3
 
-# 滑动窗口限流配置。
+# 滑动窗口限流配置，用来控制短时间内的发送节奏。
+# 它回答的是：“我现在这一小段时间里最多能打多快？”
 rate_limit:
   # 每秒最多请求数。设为 0 表示关闭按请求数限流。
   rps: 3
@@ -333,6 +372,7 @@ rate_limit:
   tokens_per_call: 850
 
 # 更长周期的调用预算上限。
+# 它回答的是：“拉长一点看，我总共最多能打多少次？”
 # 两个字段都设为 0 就表示关闭。
 cycle:
   # 一个预算周期有多长，单位秒。

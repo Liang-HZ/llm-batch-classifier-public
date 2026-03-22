@@ -235,6 +235,44 @@ If you want the technical version:
 - checkpointing writes each item immediately after the API response
 - retries distinguish transient failures from semantic failures
 
+## Window vs Cycle
+
+These are two different controls. They are not duplicates.
+
+- `rate_limit` controls short-term pacing.
+- `cycle` controls a longer-period total budget.
+
+Use `rate_limit` when your question is:
+
+> "How fast can I send requests right now without spiking too hard?"
+
+- `rate_limit.rps`: maximum requests allowed within the sliding window
+- `rate_limit.tps`: maximum estimated tokens allowed within the sliding window
+- `rate_limit.window`: how far back the limiter looks when counting requests or tokens
+- `rate_limit.tokens_per_call`: estimated tokens consumed by one request when `tps` is enabled
+
+Use `cycle` when your question is:
+
+> "Over a longer period, how many calls am I allowed to spend in total?"
+
+- `cycle.duration`: length of one budget cycle, in seconds
+- `cycle.max_calls`: maximum API calls allowed in that cycle
+
+A simple way to think about it:
+
+- `rate_limit` smooths traffic second by second
+- `cycle` caps the total spend over a minute, hour, or other longer interval
+
+Example:
+
+- `rate_limit.rps: 3` and `rate_limit.window: 1` means at most 3 requests in any 1-second window
+- `cycle.duration: 60` and `cycle.max_calls: 180` means at most 180 calls in a 60-second cycle
+
+For most users:
+
+- start with `rate_limit` only
+- add `cycle` only if your provider or your own budget is expressed as "at most N calls per minute/hour"
+
 ## CLI Reference
 
 ```text
@@ -319,7 +357,8 @@ model:
   # Number of retries for transient request failures.
   max_retries: 3
 
-# Sliding-window rate limits.
+# Sliding-window rate limits for short-term pacing.
+# This answers: "How fast can requests be sent right now?"
 rate_limit:
   # Maximum requests per second. Use 0 to disable.
   rps: 3
@@ -334,6 +373,7 @@ rate_limit:
   tokens_per_call: 850
 
 # Optional longer-period call budget.
+# This answers: "How many calls can I spend in total over a longer interval?"
 # Set both fields to 0 to disable.
 cycle:
   # Cycle length in seconds.
