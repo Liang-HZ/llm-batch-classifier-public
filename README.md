@@ -263,14 +263,22 @@ Read this after your first successful run.
 
 ```yaml
 # LLM Batch Classifier Configuration
+#
+# API keys are read from environment variables, not from YAML:
+#   export LLM_API_KEY=your-key
+#   export OPENAI_API_KEY=your-key
 
+# List every label the model is allowed to return.
+# The returned label names must match this list exactly.
 categories:
   - "Category A"
   - "Category B"
   - "Category C"
 
+# Prompt settings used for every input row.
 prompt:
-  # {categories} is injected automatically from the list above
+  # Main system prompt.
+  # {categories} is injected automatically from the list above.
   system: |
     You are a classification expert. Classify the input into these categories:
     {categories}
@@ -283,46 +291,94 @@ prompt:
 
     Output format:
     {{"labels": [{{"name": "Category Name", "confidence": 95, "reason": "reason"}}]}}
-  # {text} and {context} come from your input file columns
-  user: "{text} / {context}"
 
-  # Alternative: load system prompt from a separate file
+  # Alternative to prompt.system for long prompts stored in a separate file.
   # system_file: prompt.txt
 
+  # User prompt template built from your input columns.
+  # Only {text} and {context} are supported placeholders.
+  user: "{text} / {context}"
+
+# Model and API endpoint settings.
 model:
-  name: deepseek-chat                    # Model identifier
-  api_base: https://api.deepseek.com/v1  # Any OpenAI-compatible base URL
+  # Model identifier used by your provider.
+  name: deepseek-chat
+
+  # Base URL of any OpenAI-compatible API.
+  api_base: https://api.deepseek.com/v1
+
+  # Lower values are usually more stable for classification.
   temperature: 0.1
+
+  # Maximum output tokens allowed for one response.
   max_tokens: 500
+
+  # Per-request timeout in seconds.
   timeout: 30
+
+  # Number of retries for transient request failures.
   max_retries: 3
 
+# Sliding-window rate limits.
 rate_limit:
+  # Maximum requests per second. Use 0 to disable.
   rps: 3
+
+  # Maximum tokens per second. Use 0 to disable.
   tps: 0
+
+  # Sliding-window size in seconds.
   window: 1
+
+  # Estimated tokens consumed by one request. Used when tps > 0.
   tokens_per_call: 850
 
+# Optional longer-period call budget.
+# Set both fields to 0 to disable.
 cycle:
+  # Cycle length in seconds.
   duration: 60
+
+  # Maximum API calls allowed within one cycle.
   max_calls: 180
 
+# Backoff settings for throttling and 429 responses.
 throttle:
+  # Maximum number of backoff attempts.
   max_attempts: 10
+
+  # Initial wait time in seconds.
   base_wait: 30.0
+
+  # Upper bound for exponential backoff waits.
   max_wait: 300.0
+
+  # Random jitter added to waits.
   jitter: 0.5
 
+# Input file and column mapping.
 input:
+  # Path to the source CSV or Excel file.
   file: data.csv
+
+  # Column that contains the main text to classify.
   text_column: text
+
+  # Optional extra context column.
   context_column: context
 
+# Output location and format.
 output:
+  # Directory where result files and reports are written.
   dir: output
-  format: auto  # auto | csv | xlsx
 
+  # Use auto to follow the input type, or force csv / xlsx.
+  format: auto
+
+# Labels below this confidence threshold are filtered out.
 threshold: 95
+
+# Number of requests allowed in flight at the same time.
 concurrency: 15
 ```
 

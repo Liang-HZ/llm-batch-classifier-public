@@ -1,3 +1,5 @@
+# Public demo label set used by this example.
+# The model is only allowed to return labels from this list.
 categories:
   - "商科与管理"
   - "计算机与数据"
@@ -12,22 +14,43 @@ categories:
   - "建筑与城市环境"
   - "环境与可持续发展"
 
+# Prompt configuration for the example run.
 prompt:
+  # Load the longer system prompt from a separate text file in the same directory.
   system_file: prompt.txt
+
+  # Build the user prompt from the English name plus the Chinese name as extra context.
   user: "{text} / {context}"
 
+# Model endpoint used by the example.
 model:
+  # Model identifier to call on the provider side.
   name: deepseek-chat
+
+  # Base URL of the OpenAI-compatible API endpoint.
   api_base: https://api.deepseek.com/v1
 
+# Conservative request rate settings for a stable demo run.
 rate_limit:
+  # Maximum requests per second.
   rps: 3
+
+  # Sliding window size in seconds used by the rate limiter.
   window: 1
 
+# Input file path and column mapping for the sample dataset.
 input:
+  # Sample file included in this example directory.
   file: sample_input.csv
+
+  # Main text column to classify.
   text_column: english_name
+
+  # Extra context column shown to the model together with the main text.
   context_column: chinese_name
 
+# Only keep labels whose confidence is at least this value.
 threshold: 95
+
+# Number of concurrent requests used during the demo run.
 concurrency: 15

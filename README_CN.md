@@ -262,14 +262,22 @@ llm-classify init                      生成初始 classify.yaml 模板
 
 ```yaml
 # LLM Batch Classifier 配置文件
+#
+# API key 不放在 YAML 里，而是从环境变量读取：
+#   export LLM_API_KEY=your-key
+#   export OPENAI_API_KEY=your-key
 
+# 列出模型允许返回的全部标签。
+# 模型输出的标签名称必须和这里完全一致。
 categories:
   - "类别 A"
   - "类别 B"
   - "类别 C"
 
+# 每条输入都会使用到的提示词配置。
 prompt:
-  # {categories} 会自动从上方列表注入
+  # 主系统提示词。
+  # {categories} 会自动替换成上方的标签列表。
   system: |
     你是一位分类专家。请将输入内容分到以下类别中：
     {categories}
@@ -282,46 +290,94 @@ prompt:
 
     输出格式：
     {{"labels": [{{"name": "类别名称", "confidence": 95, "reason": "分类理由"}}]}}
-  # {text} 和 {context} 来自你的输入文件列
-  user: "{text} / {context}"
 
-  # 也可以从独立文件加载系统提示词
+  # 也可以不用上面的 prompt.system，而是从独立文本文件加载长提示词。
   # system_file: prompt.txt
 
+  # 用户提示词模板，从输入文件列中拼出来。
+  # 这里只支持 {text} 和 {context} 两个占位符。
+  user: "{text} / {context}"
+
+# 模型与 API 端点配置。
 model:
-  name: deepseek-chat                    # 模型标识符
-  api_base: https://api.deepseek.com/v1  # 任意 OpenAI 兼容的 Base URL
+  # 提供商识别的模型名称。
+  name: deepseek-chat
+
+  # 任意 OpenAI 兼容接口的 Base URL。
+  api_base: https://api.deepseek.com/v1
+
+  # 分类任务通常建议用较低温度，结果更稳定。
   temperature: 0.1
+
+  # 单条请求允许模型返回的最大 token 数。
   max_tokens: 500
+
+  # 单次请求超时时间，单位秒。
   timeout: 30
+
+  # 单次 API 调用内部对瞬时错误的重试次数。
   max_retries: 3
 
+# 滑动窗口限流配置。
 rate_limit:
+  # 每秒最多请求数。设为 0 表示关闭按请求数限流。
   rps: 3
+
+  # 每秒最多 token 数。设为 0 表示关闭按 token 限流。
   tps: 0
+
+  # 滑动窗口大小，单位秒。
   window: 1
+
+  # 单次请求大约会消耗多少 token。只有在 tps > 0 时才会用到。
   tokens_per_call: 850
 
+# 更长周期的调用预算上限。
+# 两个字段都设为 0 就表示关闭。
 cycle:
+  # 一个预算周期有多长，单位秒。
   duration: 60
+
+  # 一个周期内最多允许多少次 API 调用。
   max_calls: 180
 
+# 遇到 429 等限流错误时的退避重试配置。
 throttle:
+  # 最多做多少次退避重试。
   max_attempts: 10
+
+  # 第一次重试前等待多久，单位秒。
   base_wait: 30.0
+
+  # 指数退避等待时间的上限，单位秒。
   max_wait: 300.0
+
+  # 每次等待时额外加入的随机抖动，单位秒。
   jitter: 0.5
 
+# 输入文件与列映射。
 input:
+  # 输入文件路径，支持 CSV 和 Excel。
   file: data.csv
+
+  # 要分类的主文本列名。
   text_column: text
+
+  # 可选的补充上下文列名。
   context_column: context
 
+# 输出目录与格式。
 output:
+  # 结果文件和报告写入到哪个目录。
   dir: output
-  format: auto  # auto | csv | xlsx
 
+  # auto 表示跟随输入类型，也可以强制写成 csv 或 xlsx。
+  format: auto
+
+# 低于这个置信度阈值的标签会被过滤掉。
 threshold: 95
+
+# 同时允许多少个请求在飞行中。
 concurrency: 15
 ```
 
