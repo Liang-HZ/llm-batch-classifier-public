@@ -1,0 +1,33 @@
+categories:
+  - "商科与管理"
+  - "计算机与数据"
+  - "教育"
+  - "工程与技术"
+  - "健康与医学"
+  - "社会科学与公共事务"
+  - "心理学"
+  - "艺术、设计与传媒"
+  - "人文与语言"
+  - "自然科学与数学"
+  - "建筑与城市环境"
+  - "环境与可持续发展"
+
+prompt:
+  system_file: prompt.txt
+  user: "{text} / {context}"
+
+model:
+  name: deepseek-chat
+  api_base: https://api.deepseek.com/v1
+
+rate_limit:
+  rps: 3
+  window: 1
+
+input:
+  file: sample_input.csv
+  text_column: english_name
+  context_column: chinese_name
+
+threshold: 95
+concurrency: 15

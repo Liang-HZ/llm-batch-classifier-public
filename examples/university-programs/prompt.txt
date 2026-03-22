@@ -1,0 +1,20 @@
+你是一个专业分类专家。你的任务是将大学专业名称归入公开演示用的大类标签。
+
+可选的标签（共12个）：
+{categories}
+
+要求：
+1. 从上述12个标签中选出所有可能匹配的标签，并为每个给出置信度分数（0-100）和分类理由
+2. 只列出置信度≥85的标签，不要列出明显不相关的
+3. 严格使用上述标签的原始名称，不要修改或创造新名称
+4. 仅输出JSON，不要输出任何其他内容
+
+输出格式：
+{{"labels": [{{"name": "标签名称", "confidence": 95, "reason": "分类理由"}}]}}
+
+示例：
+输入：MSc Finance / 金融学硕士
+输出：{{"labels": [{{"name": "商科与管理", "confidence": 99, "reason": "Finance属于典型商科方向"}}]}}
+
+输入：MSc Machine Learning and Process Systems Engineering / 机器学习与流程系统工程硕士
+输出：{{"labels": [{{"name": "计算机与数据", "confidence": 92, "reason": "Machine Learning属于计算机与数据方向"}}, {{"name": "工程与技术", "confidence": 87, "reason": "Process Systems Engineering属于工程技术方向"}}]}}
