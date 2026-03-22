@@ -1,0 +1,40 @@
+name: Feature request
+description: Propose an improvement or a new capability.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      placeholder: I need a clearer way to compare old vs new labels across prompt versions.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What change do you want?
+      placeholder: Add a summary section to the markdown report that groups diffs by label.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Why does this fit this project?
+      description: Explain why this belongs in a batch classifier rather than a separate tool.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I checked existing issues and the README first.
+          required: true
+        - label: This request does not require private data to explain.
+          required: true

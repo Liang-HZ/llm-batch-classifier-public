@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage docs
+    url: https://github.com/Liang-HZ/llm-batch-classifier-public/blob/main/README.md
+    about: Start with the README and example workflow.
+  - name: Security policy
+    url: https://github.com/Liang-HZ/llm-batch-classifier-public/blob/main/SECURITY.md
+    about: Use this path for security-sensitive reports.

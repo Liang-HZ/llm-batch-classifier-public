@@ -1,6 +1,6 @@
 # LLM Batch Classifier
 
-A practical LLM tool for batch classification: give it a CSV/Excel file, a fixed label set, and a prompt, and it will run the whole job with rate limiting, checkpointing, and auto-retry.
+Use this project when you need to classify a large CSV/Excel file with an LLM into a fixed set of labels and you want the run to be stable, resumable, and easy to operate.
 
 [![PyPI version](https://badge.fury.io/py/llm-batch-classifier.svg)](https://pypi.org/project/llm-batch-classifier/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -8,19 +8,14 @@ A practical LLM tool for batch classification: give it a CSV/Excel file, a fixed
 
 English | [中文](README_CN.md)
 
-## What This Is
+## What You Can Do With It
 
-If your problem sounds like this:
+This repository is for readers who want to:
 
-> “I have a lot of text rows, I want an LLM to classify them into a fixed set of labels, and I do not want the job to crash halfway through or burn budget on bad retries.”
-
-This project is built for that.
-
-It is a good fit for:
-
-- Batch classification with a fixed taxonomy: intents, tickets, programs, content tags, product categories
-- Long-running jobs against rate-limited APIs
-- Re-running an already labeled CSV to compare old vs new labels
+- Classify many rows into a fixed taxonomy with an OpenAI-compatible API
+- Resume a long run after interruption
+- Re-run an existing labeled CSV and compare old vs new labels
+- Keep API usage under control with built-in rate limiting and retry behavior
 
 It is not a good fit for:
 
@@ -28,13 +23,31 @@ It is not a good fit for:
 - Open-ended generation or Q&A
 - A distributed online service with multiple machines sharing one API key
 
+## Repository Guide
+
+- Start here: [3-Minute Start](#3-minute-start-run-the-built-in-example)
+- Use your own file: [5-Minute Start With Your Own Data](#5-minute-start-with-your-own-data)
+- Example files: [examples/university-programs](examples/university-programs)
+- Need help or want to report something: [GitHub Issues](https://github.com/Liang-HZ/llm-batch-classifier-public/issues/new/choose)
+- Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Security policy: [SECURITY.md](SECURITY.md)
+- Community expectations: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
+## Before You Start
+
+You only need 3 things:
+
+- Python 3.11 or newer
+- An API key for an OpenAI-compatible endpoint
+- A CSV or Excel file with one main text column
+
 ## 3-Minute Start: Run the Built-In Example
 
 If this is your first time here, do not start by writing your own config. Run the built-in example first.
 
 ```bash
-git clone <your-repo-url>
-cd llm-batch-classifier
+git clone https://github.com/Liang-HZ/llm-batch-classifier-public.git
+cd llm-batch-classifier-public
 python -m pip install -e .
 export LLM_API_KEY=your-api-key
 llm-classify run --config examples/university-programs/classify.yaml
@@ -199,6 +212,14 @@ Before increasing retry counts, first check:
 
 Being conservative is usually more stable.
 
+## Need Help?
+
+Use these paths, depending on what you need:
+
+- Usage questions and bug reports: [GitHub Issues](https://github.com/Liang-HZ/llm-batch-classifier-public/issues/new/choose)
+- Security-sensitive reports: [SECURITY.md](SECURITY.md)
+- Contribution rules and local setup: [CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## How It Works, In Plain English
 
 1. Read your CSV/Excel file
@@ -330,12 +351,19 @@ That makes it useful for prompt regression testing.
 
 ## Contributing
 
-Contributions are welcome. Please open an issue before a large pull request so we can discuss the approach.
+If you want to contribute, start with [CONTRIBUTING.md](CONTRIBUTING.md).
 
-1. Fork the repository and create a feature branch
+In short:
+
+1. Fork the repository and create a branch
 2. Install dev dependencies: `python -m pip install -e ".[dev]"`
 3. Run tests: `pytest`
-4. Open a pull request with a clear description of the change
+4. Open a pull request with a clear change summary
+
+Please also read:
+
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- [SECURITY.md](SECURITY.md)
 
 ## License
 

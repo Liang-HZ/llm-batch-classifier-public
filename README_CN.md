@@ -1,6 +1,6 @@
 # LLM Batch Classifier
 
-面向批量分类任务的 LLM 工具：给你一份 CSV/Excel、一个标签列表和一个提示词，它会帮你稳定地跑完整批数据，带限流、断点续跑和失败重试。
+如果你需要把一大批 CSV/Excel 文本按固定标签交给 LLM 分类，而且希望流程稳定、可续跑、好排查，这个项目就是给你用的。
 
 [![PyPI version](https://badge.fury.io/py/llm-batch-classifier.svg)](https://pypi.org/project/llm-batch-classifier/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -8,15 +8,9 @@
 
 [English](README.md) | 中文
 
-## 先说结论
+## 你可以用它做什么
 
-如果你只关心一件事：
-
-> “我有很多条文本，想让 LLM 按固定标签批量分类，而且中途不要炸、超时后能续跑、失败的还能重试。”
-
-这个项目就是干这个的。
-
-它最适合：
+这个仓库适合这样的读者：
 
 - 固定标签体系的批量分类，例如专业分类、工单分类、意图分类、内容标签、行业归类
 - 大批量任务，运行时间长，API 有速率限制
@@ -28,13 +22,31 @@
 - 开放式问答、总结、生成型任务
 - 多机分布式共享同一个 API key 的在线服务
 
+## 仓库导航
+
+- 从这里开始：[3 分钟跑通](#3-分钟跑通直接用仓库自带示例)
+- 跑你自己的数据：[5 分钟用你自己的数据](#5-分钟用你自己的数据)
+- 示例文件：[examples/university-programs](examples/university-programs)
+- 提问或报问题：[GitHub Issues](https://github.com/Liang-HZ/llm-batch-classifier-public/issues/new/choose)
+- 贡献说明：[CONTRIBUTING.md](CONTRIBUTING.md)
+- 安全策略：[SECURITY.md](SECURITY.md)
+- 社区规范：[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
+## 开始前你需要准备什么
+
+只要 3 样东西：
+
+- Python 3.11 或更高版本
+- 一个 OpenAI-compatible API 的 key
+- 一份至少包含一列主文本的 CSV 或 Excel
+
 ## 3 分钟跑通：直接用仓库自带示例
 
 如果你是第一次看这个项目，先不要写自己的配置。先跑通内置示例。
 
 ```bash
-git clone <your-repo-url>
-cd llm-batch-classifier
+git clone https://github.com/Liang-HZ/llm-batch-classifier-public.git
+cd llm-batch-classifier-public
 python -m pip install -e .
 export LLM_API_KEY=your-api-key
 llm-classify run --config examples/university-programs/classify.yaml
@@ -199,6 +211,14 @@ llm-classify retry output/run_xxx/classification_result.csv
 
 保守一点通常更稳。
 
+## 遇到问题去哪里
+
+按问题类型走这几个入口：
+
+- 使用问题和 Bug：去 [GitHub Issues](https://github.com/Liang-HZ/llm-batch-classifier-public/issues/new/choose)
+- 安全相关问题：看 [SECURITY.md](SECURITY.md)
+- 想参与贡献：看 [CONTRIBUTING.md](CONTRIBUTING.md)
+
 ## 它是怎么工作的（白话版）
 
 1. 读取你的 CSV/Excel
@@ -330,12 +350,19 @@ llm-classify run --config classify.yaml --input-csv old_results.csv
 
 ## 参与贡献
 
-欢迎贡献代码。提交较大的 Pull Request 前，请先开一个 Issue 讨论方案。
+如果你想提代码、改文档或补测试，先看 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
+简要流程是：
 
 1. Fork 仓库并创建功能分支
 2. 安装开发依赖：`python -m pip install -e ".[dev]"`
 3. 运行测试：`pytest`
 4. 提交 Pull Request，并说明你的修改内容
+
+提交前也建议阅读：
+
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- [SECURITY.md](SECURITY.md)
 
 ## License
 
